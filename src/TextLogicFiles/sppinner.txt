@@ -1,0 +1,129 @@
+Good question 👍
+What you want is **conditional rendering**: show the spinner **only while reloading / fetching**, and remove it when the data is ready.
+
+Below are the **clean, correct patterns** used in React.
+
+---
+
+## ✅ 1️⃣ Spinner while fetching data (most common)
+
+Use `useState` + `useEffect`.
+
+```jsx
+import { useEffect, useState } from "react";
+
+function MyComponent() {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetch("https://api.example.com/data")
+      .then(res => res.json())
+      .then(result => {
+        setData(result);
+        setLoading(false); // stop spinner
+      })
+      .catch(() => {
+        setLoading(false); // stop spinner even on error
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="spinner-border text-dark" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {/* your real content */}
+      <h1>Data loaded</h1>
+    </div>
+  );
+}
+
+export default MyComponent;
+```
+
+👉 Spinner **appears while fetching**
+👉 Spinner **disappears automatically** when done
+
+---
+
+## ✅ 2️⃣ Spinner on button click (manual reload)
+
+Useful for “Reload” or “Submit” buttons.
+
+```jsx
+function ReloadExample() {
+  const [loading, setLoading] = useState(false);
+
+  const reloadData = async () => {
+    setLoading(true);
+
+    await fetch("https://api.example.com/data");
+
+    setLoading(false);
+  };
+
+  return (
+    <>
+      <button onClick={reloadData} disabled={loading}>
+        {loading ? "Loading..." : "Reload"}
+      </button>
+
+      {loading && (
+        <div className="spinner-border text-dark ms-2" role="status" />
+      )}
+    </>
+  );
+}
+```
+
+---
+
+## ✅ 3️⃣ Spinner overlay (page still visible)
+
+Best UX for dashboards.
+
+```jsx
+{loading && (
+  <div className="position-fixed top-0 start-0 w-100 h-100
+                  d-flex justify-content-center align-items-center
+                  bg-white bg-opacity-75">
+    <div className="spinner-border text-primary" role="status" />
+  </div>
+)}
+```
+
+---
+
+## ❌ What NOT to do
+
+* Don’t show spinner without a `loading` state
+* Don’t forget to set `loading` to `false`
+* Don’t block UI forever on fetch errors
+
+---
+
+## 🧠 Rule of thumb
+
+| Situation         | Spinner type        |
+| ----------------- | ------------------- |
+| Initial page load | Full-screen spinner |
+| Fetching new data | Inline spinner      |
+| Button action     | Button spinner      |
+| Dashboard refresh | Overlay spinner     |
+
+---
+
+If you want, tell me:
+
+* Are you using **fetch or axios**?
+* Do you want **page-wide** or **component-only** loading?
+
+I’ll tailor the exact code for your case 🚀
