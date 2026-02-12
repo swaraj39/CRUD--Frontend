@@ -27,7 +27,7 @@ export default function Dashboard() {
     // 2️⃣ Fetch products only if user exists (kept but not used in UI)
     useEffect(() => {
         if (!user) return;
-        axios.get("https://curd-backend-oxyd.onrender.com/get/allproducts")
+        axios.get("https://curd-backend-oxyd.onrender.com/get/allproducts" , { withCredentials: true })
             .then(res => {
                 setProducts(Array.isArray(res.data) ? res.data : []);
             })
