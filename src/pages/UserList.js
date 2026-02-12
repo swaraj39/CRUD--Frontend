@@ -1,68 +1,103 @@
 import { useEffect, useState } from "react";
 import axios from "../axiosConfig";
 import NavAfterLogin from "./NavAfterLogin";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function UserList() {
+
     const [user, setUser] = useState(null);
     const [userList, setUserList] = useState([]);
     const [editUser, setEditUser] = useState(null);
+    const [deleteUserId, setDeleteUserId] = useState(null);
     const [search, setSearch] = useState("");
 
+    // ==========================
     // FETCH USERS
+    // ==========================
     useEffect(() => {
-        axios.get("/getAllUsers")
-            .then(res => setUserList(res.data))
-            .catch(() => setUserList([]));
-
-        axios.get("/test")
-            .then(res => setUser(res.data))
-            .catch(() => setUser(null));
+        fetchUsers();
+        fetchLoggedUser();
     }, []);
 
-    // DELETE
-    const deleteUser = (email) => {
-        axios.delete(`/users/${email}`, { withCredentials: true })
+    const fetchUsers = () => {
+        axios.get("/getAllUsers", { withCredentials: true })
             .then(res => setUserList(res.data))
-            .catch(err => console.log(err));
+            .catch(err => {
+                console.log(err);
+                setUserList([]);
+            });
     };
 
-    // UPDATE
+    const fetchLoggedUser = () => {
+        axios.get("/test", { withCredentials: true })
+            .then(res => setUser(res.data))
+            .catch(() => setUser(null));
+    };
+
+    // ==========================
+    // DELETE USER
+    // ==========================
+    const confirmDelete = (id) => {
+        setDeleteUserId(id);
+    };
+
+    const deleteUser = () => {
+        axios.delete(`/users/${deleteUserId}`, { withCredentials: true })
+            .then(res => {
+                setUserList(res.data);
+                setDeleteUserId(null);
+                toast.success("User deleted successfully!");
+            })
+            .catch(err => {
+                console.log(err);
+                toast.error("Failed to delete user!");
+            });
+    };
+
+
+    // ==========================
+    // UPDATE USER
+    // ==========================
     const submitUpdate = (e) => {
         e.preventDefault();
 
-        axios.put(`/user/${editUser.email}`, editUser, { withCredentials: true })
+        axios.put(`/user/${editUser.id}`, editUser, { withCredentials: true })
             .then(res => {
                 setUserList(res.data);
                 setEditUser(null);
+                toast.success("User updated successfully!");
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                console.log(err);
+                toast.error("Failed to update user!");
+            });
     };
 
+    // ==========================
+    // SEARCH FILTER
+    // ==========================
     const filteredUsers = userList.filter(u => {
         const q = search.toLowerCase();
-
-        const idText = String(u.id || u._id || "").toLowerCase();
-        const displayId = String(`BAC00${u.id || u._id || ""}`).toLowerCase();
 
         return (
             (u.name || "").toLowerCase().includes(q) ||
             (u.email || "").toLowerCase().includes(q) ||
             String(u.phone || "").toLowerCase().includes(q) ||
             String(u.dob || "").toLowerCase().includes(q) ||
-            idText.includes(q) ||
-            displayId.includes(q)
+            String(u.id || "").includes(q)
         );
     });
-
-
 
     return (
         <>
             <NavAfterLogin name={user?.name || ""} />
 
-            <div className="container mt-3">
+            <ToastContainer position="top-right" autoClose={3000} />
 
-                {/* ===== SEARCH BAR ===== */}
+            <div className="container mt-4">
+
+                {/* ================= SEARCH ================= */}
                 <div className="row mb-3">
                     <div className="col-md-4 ms-auto">
                         <input
@@ -75,62 +110,123 @@ function UserList() {
                     </div>
                 </div>
 
-                {/* ===== POPUP MODAL ===== */}
+                {/* ================= UPDATE MODAL ================= */}
                 {editUser && (
-                    <div className="modal fade show d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
-                        <div className="modal-dialog">
-                            <div className="modal-content p-3">
+                    <div className="modal fade show d-block"
+                         style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
 
-                                <h6>Update User</h6>
+                        <div className="modal-dialog">
+                            <div className="modal-content p-4">
+
+                                <h5 className="mb-3">Update User</h5>
 
                                 <form onSubmit={submitUpdate}>
+
                                     <input
                                         className="form-control mb-2"
-                                        value={editUser.name}
-                                        onChange={e => setEditUser({ ...editUser, name: e.target.value })}
+                                        value={editUser.name || ""}
+                                        onChange={e =>
+                                            setEditUser({
+                                                ...editUser,
+                                                name: e.target.value
+                                            })
+                                        }
                                         placeholder="Name"
+                                        required
                                     />
 
                                     <input
                                         className="form-control mb-2"
-                                        value={editUser.email}
-                                        onChange={e => setEditUser({ ...editUser, email: e.target.value })}
+                                        value={editUser.email || ""}
+                                        onChange={e =>
+                                            setEditUser({
+                                                ...editUser,
+                                                email: e.target.value
+                                            })
+                                        }
                                         placeholder="Email"
+                                        required
                                     />
 
                                     <input
+                                        type="date"
                                         className="form-control mb-2"
-                                        value={editUser.dob}
-                                        onChange={e => setEditUser({ ...editUser, dob: e.target.value })}
-                                        placeholder="Date of Birth"
+                                        value={editUser.dob || ""}
+                                        onChange={e =>
+                                            setEditUser({
+                                                ...editUser,
+                                                dob: e.target.value
+                                            })
+                                        }
                                     />
 
                                     <input
-                                        className="form-control mb-2"
-                                        value={editUser.phone}
-                                        onChange={e => setEditUser({ ...editUser, phone: e.target.value })}
-                                        placeholder="Mobile Number"
+                                        className="form-control mb-3"
+                                        value={editUser.phone || ""}
+                                        onChange={e =>
+                                            setEditUser({
+                                                ...editUser,
+                                                phone: e.target.value
+                                            })
+                                        }
+                                        placeholder="Phone"
                                     />
 
                                     <div className="text-end">
-                                        <button className="btn btn-success btn-sm me-2">Save</button>
+                                        <button
+                                            type="submit"
+                                            className="btn btn-success btn-sm me-2">
+                                            Save
+                                        </button>
+
                                         <button
                                             type="button"
                                             className="btn btn-secondary btn-sm"
-                                            onClick={() => setEditUser(null)}
-                                        >
+                                            onClick={() => setEditUser(null)}>
                                             Cancel
                                         </button>
                                     </div>
+
                                 </form>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* ================= DELETE CONFIRMATION MODAL ================= */}
+                {deleteUserId && (
+                    <div className="modal fade show d-block"
+                         style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+
+                        <div className="modal-dialog">
+                            <div className="modal-content p-4">
+
+                                <h5 className="mb-3">Confirm Delete</h5>
+
+                                <p>Are you sure you want to delete this user?</p>
+
+                                <div className="text-end">
+                                    <button
+                                        className="btn btn-danger btn-sm me-2"
+                                        onClick={deleteUser}>
+                                        Yes, Delete
+                                    </button>
+
+                                    <button
+                                        className="btn btn-secondary btn-sm"
+                                        onClick={() => setDeleteUserId(null)}>
+                                        Cancel
+                                    </button>
+                                </div>
 
                             </div>
                         </div>
                     </div>
                 )}
 
-                {/* ===== USER TABLE ===== */}
+                {/* ================= USER TABLE ================= */}
                 <table className="table table-bordered table-hover">
+
                     <thead className="table-dark">
                     <tr>
                         <th>ID</th>
@@ -154,15 +250,13 @@ function UserList() {
                                 <td>
                                     <button
                                         className="btn btn-warning btn-sm me-2"
-                                        onClick={() => setEditUser(u)}
-                                    >
+                                        onClick={() => setEditUser(u)}>
                                         Update
                                     </button>
 
                                     <button
                                         className="btn btn-danger btn-sm"
-                                        onClick={() => deleteUser(u.email)}
-                                    >
+                                        onClick={() => confirmDelete(u.email)}>
                                         Delete
                                     </button>
                                 </td>
@@ -176,6 +270,7 @@ function UserList() {
                         </tr>
                     )}
                     </tbody>
+
                 </table>
 
             </div>

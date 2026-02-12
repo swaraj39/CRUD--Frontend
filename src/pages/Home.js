@@ -11,8 +11,8 @@ function Home() {
 
             {/* Main Content */}
             <div style={{ padding: '2rem', textAlign: 'center' }}>
-                <h1>Welcome to My Website!</h1>
-                <p>This is some content below the navbar.</p>
+                <h1>Welcome to Altarians Management System</h1>
+                <br></br>
                 <button
                     style={{
                         padding: '0.5rem 1rem',
