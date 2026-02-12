@@ -45,9 +45,7 @@ export default function Dashboard() {
         );
     }
 
-    if (!user?.name) {
-    return <Login />;
-}
+    
     return (
         <>
             {/* Enhanced Navbar with user name */}
