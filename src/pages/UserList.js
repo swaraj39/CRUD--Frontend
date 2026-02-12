@@ -21,7 +21,7 @@ function UserList() {
     }, []);
 
     const fetchUsers = () => {
-        axios.get("/getAllUsers", { withCredentials: true })
+        axios.get("https://curd-backend-oxyd.onrender.com/getAllUsers", { withCredentials: true })
             .then(res => setUserList(res.data))
             .catch(err => {
                 console.log(err);
@@ -30,7 +30,7 @@ function UserList() {
     };
 
     const fetchLoggedUser = () => {
-        axios.get("/test", { withCredentials: true })
+        axios.get("https://curd-backend-oxyd.onrender.com/test", { withCredentials: true })
             .then(res => setUser(res.data))
             .catch(() => setUser(null));
     };
@@ -43,7 +43,7 @@ function UserList() {
     };
 
     const deleteUser = () => {
-        axios.delete(`/users/${deleteUserId}`, { withCredentials: true })
+        axios.delete(`https://curd-backend-oxyd.onrender.com/users/${deleteUserId}`, { withCredentials: true })
             .then(res => {
                 setUserList(res.data);
                 setDeleteUserId(null);
@@ -62,7 +62,7 @@ function UserList() {
     const submitUpdate = (e) => {
         e.preventDefault();
 
-        axios.put(`/user/${editUser.id}`, editUser, { withCredentials: true })
+        axios.put(`https://curd-backend-oxyd.onrender.com/user/${editUser.id}`, editUser, { withCredentials: true })
             .then(res => {
                 setUserList(res.data);
                 setEditUser(null);

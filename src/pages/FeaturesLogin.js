@@ -6,7 +6,7 @@ function FeaturesLogin() {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        axios.get("/test")
+        axios.get("https://curd-backend-oxyd.onrender.com/test")
             .then(res => setUser(res.data))
             .catch(err => setUser(null));
     }, []);

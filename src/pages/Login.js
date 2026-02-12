@@ -23,7 +23,7 @@ export default function Login() {
             params.append("username", username);
             params.append("password", password);
 
-            await axios.post("http://localhost:8081/login", params.toString(), {
+            await axios.post("https://curd-backend-oxyd.onrender.com/login", params.toString(), {
                 headers: { "Content-Type": "application/x-www-form-urlencoded" }
             });
 
@@ -39,7 +39,7 @@ export default function Login() {
         setError("");
 // put request
         try {
-            await axios.post("/signin", {
+            await axios.post("https://curd-backend-oxyd.onrender.com/signin", {
                 email: username,
                 password,
                 name
