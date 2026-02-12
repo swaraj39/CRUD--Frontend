@@ -23,9 +23,14 @@ export default function Login() {
             params.append("username", username);
             params.append("password", password);
 
-            await axios.post("https://curd-backend-oxyd.onrender.com/login", params.toString(), {
-                headers: { "Content-Type": "application/x-www-form-urlencoded" }
-            });
+           await axios.post(
+  "https://curd-backend-oxyd.onrender.com/login",
+  params.toString(),
+  {
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    withCredentials: true
+  }
+);
 
             window.location.replace("/dashboard");
 
@@ -39,11 +44,11 @@ export default function Login() {
         setError("");
 // put request
         try {
-            await axios.post("https://curd-backend-oxyd.onrender.com/signin", {
-                email: username,
-                password,
-                name
-            });
+           await axios.post(
+  "https://curd-backend-oxyd.onrender.com/signin",
+  { email: username, password, name },
+  { withCredentials: true }
+);
             // sucess url
             toast.success("Signup successful! Please login.", {
                 style: {
