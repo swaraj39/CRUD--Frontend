@@ -52,7 +52,7 @@ export default function Dashboard() {
     return (
         <>
             {/* Enhanced Navbar with user name */}
-            <NavAfterLogin name={user?.name || "User"} />
+            <NavAfterLogin name={user || "User"} />
 
             {/* ✨ HERO SECTION – Modern gradient, subtle animation */}
             <section className="position-relative overflow-hidden py-5 px-3 text-white"
