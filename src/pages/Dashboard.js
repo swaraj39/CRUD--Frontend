@@ -45,14 +45,13 @@ export default function Dashboard() {
         );
     }
 
-    if (!user || user === "") {
-        return <Login />;
-    }
-
+    if (!user?.name) {
+    return <Login />;
+}
     return (
         <>
             {/* Enhanced Navbar with user name */}
-            <NavAfterLogin name={user || "User"} />
+           <NavAfterLogin name={user?.name || "User"} />
 
             {/* ✨ HERO SECTION – Modern gradient, subtle animation */}
             <section className="position-relative overflow-hidden py-5 px-3 text-white"
