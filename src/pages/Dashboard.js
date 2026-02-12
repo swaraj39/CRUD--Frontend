@@ -6,7 +6,7 @@ import Login from "./Login";
 
 export default function Dashboard() {
     const navigate = useNavigate();
-    const [user, setUser] = useState("");
+    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [products, setProducts] = useState([]); // kept, but not displayed
 
